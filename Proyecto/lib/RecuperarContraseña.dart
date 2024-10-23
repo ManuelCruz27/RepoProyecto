@@ -29,7 +29,7 @@ class _RecuperarContrasenaState extends State<RecuperarContrasena> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.100.102:3001/solicitar-recuperacio'), // la IPv4 cambia dependiendo de la red que estés conectado
+        Uri.parse('http://192.168.100.19:3001/solicitar-recuperacio'), // la IPv4 cambia dependiendo de la red que estés conectado
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(requestBody),
       );

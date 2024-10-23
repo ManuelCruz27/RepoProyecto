@@ -73,7 +73,7 @@ class _RegistroScreenState extends State<Registro_Screen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.100.102:3000/register'), // la IPv4 cambia dependiendo de la red que estés conectado
+        Uri.parse('http://192.168.100.19:3000/register'), // la IPv4 cambia dependiendo de la red que estés conectado
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(requestBody),
       );

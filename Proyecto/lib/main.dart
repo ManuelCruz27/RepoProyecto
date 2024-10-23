@@ -5,6 +5,9 @@ import 'dart:async';
 import 'package:proyecto/MenuScreen.dart';
 import 'package:proyecto/RecuperarContraseña.dart';
 import 'package:proyecto/Registro_Screen.dart';
+import 'package:proyecto/Home.dart';
+import 'package:proyecto/Menu.dart';
+
 
 void main() {
   runApp(GasWiseApp());
@@ -52,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       // Realiza la petición HTTP POST para iniciar sesión
       final response = await http.post(
-        Uri.parse('http://192.168.100.102:3000/login'), // la IPv4 cambia dependiendo de la red que estés conectado
+        Uri.parse('http://192.168.100.19:3000/login'), // la IPv4 cambia dependiendo de la red que estés conectado
         headers: {'Content-Type': 'application/json'}, // Cabeceras de la solicitud
         body: jsonEncode(requestBody), // Convierte el cuerpo de la solicitud a JSON
       );
@@ -70,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => MenuScreen(nombreUsuario: nombreUsuario)), // Navega a la pantalla del menú
+                builder: (context) => MenuPrincipal(nombreUsuario: nombreUsuario)), // Navega a la pantalla del menú
           );
         } else {
           // Muestra un error si no se encuentra el campo 'nombre' en la respuesta
@@ -232,6 +235,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Text('Iniciar sesión'),
                       ),
                     ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => GasWiseHome()),
+                              (Route<dynamic> route) => false,
+                        );
+                      },
+                      child: Text('Home'),
+                    ),
+
                     SizedBox(height: 20),
                     // Botón para recuperar la contraseña
                     TextButton(
