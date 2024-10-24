@@ -32,6 +32,7 @@ dependencies:
     sdk: flutter
   http: ^0.13.3  # Agrega esta línea fuera de 'sdk: flutter'
   crypto: ^3.0.0  # Añade esta línea para usar la librería crypto
+  shared_preferences: ^2.0.6  # Agrega esta línea para incluir la dependencia
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
