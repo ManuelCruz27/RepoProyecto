@@ -9,6 +9,7 @@ class Registro_Screen extends StatefulWidget {
   @override
   _RegistroScreenState createState() => _RegistroScreenState();
 }
+
 // Pantalla de Registro (sin hash en el cliente)
 class _RegistroScreenState extends State<Registro_Screen> {
   final TextEditingController nombreController = TextEditingController();
@@ -101,75 +102,122 @@ class _RegistroScreenState extends State<Registro_Screen> {
     }
   }
 
+  // **New: Image variables**
+  final _backgroundImage = AssetImage('assets/bg1.png'); // Assuming your image is named 'background_image.jpg' and resides in an 'images' folder within your project
+  final _logoImage = AssetImage('assets/logo.png'); // Asegúrate de tener el logo en assets
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Registro')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('Registro de Usuario', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            SizedBox(height: 20),
-            TextField(
-              controller: nombreController,
-              decoration: InputDecoration(labelText: 'Nombre', border: OutlineInputBorder()),
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: correoController,
-              decoration: InputDecoration(labelText: 'Correo', border: OutlineInputBorder()),
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: passwordController,
-              obscureText: _isObscure,
-              decoration: InputDecoration(
-                labelText: 'Contraseña',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: _actualizarFuerzaContrasena,
-            ),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Checkbox(
-                  value: !_isObscure,
-                  activeColor: Colors.green,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _isObscure = !value!;
-                    });
-                  },
+      // **New: ClipRRect for rounded corners**
+      body: Stack(
+        children: [
+          // **Image Container: Circular Image at the top**
+          Positioned(
+            top: -90,
+            left: 0,
+            right: 0,
+            child: ClipOval(
+              child: Container(
+                width: MediaQuery.of(context).size.width, // Ancho total
+                height: 250, // Altura de la imagen
+                child: Image(
+                  image: _backgroundImage,
+                  fit: BoxFit.cover,
                 ),
-                Expanded(child: Text('Mostrar Contraseña')),
-              ],
+              ),
             ),
-            SizedBox(height: 20),
-            LinearProgressIndicator(
-              value: _passwordStrength,
-              backgroundColor: Colors.redAccent,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
-              minHeight: 10,
+          ),
+
+          // Logo en la parte superior (más pequeño)
+          Positioned(
+            top: 35, // Adjust vertical position
+            left: 20,
+            right: 20,
+            child: SizedBox(
+              height: 100, // Adjust logo size
+              width: 100, // Adjust logo size
+              child: Image.asset(
+                'assets/logo.png', // Replace with your logo image
+                fit: BoxFit.contain,
+              ),
             ),
-            SizedBox(height: 20),
-            Text(
-              'La contraseña debe cumplir con los siguientes requisitos:',
-              style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+
+          // **Form Content**
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  //Text('Registro de Usuario', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 180), // Asegura que haya espacio debajo del logo
+                  TextField(
+                    controller: nombreController,
+                    decoration: InputDecoration(labelText: 'Nombre', border: OutlineInputBorder()),
+                  ),
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: correoController,
+                    decoration: InputDecoration(labelText: 'Correo', border: OutlineInputBorder()),
+                  ),
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: passwordController,
+                    obscureText: _isObscure,
+                    decoration: InputDecoration(
+                      labelText: 'Contraseña',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: _actualizarFuerzaContrasena,
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: !_isObscure,
+                        activeColor: Colors.green,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isObscure = !value!;
+                          });
+                        },
+                      ),
+                      Expanded(child: Text('Mostrar Contraseña')),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  LinearProgressIndicator(
+                    value: _passwordStrength,
+                    backgroundColor: Colors.redAccent,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                    minHeight: 10,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'La contraseña debe cumplir con los siguientes requisitos:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text('Al menos 6 caracteres'),
+                  Text('Una letra mayúscula'),
+                  Text('Una letra minúscula'),
+                  Text('Un número'),
+                  Text('Un símbolo especial (ej: !@#/&*^)'),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _registrarUsuario,
+                    child: Text('Registrar'),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.orange, // Cambiar color del texto
+                    ),
+                  ),
+                ],
+              ),
             ),
-            Text('Al menos 6 caracteres'),
-            Text('Una letra mayúscula'),
-            Text('Una letra minúscula'),
-            Text('Un número'),
-            Text('Un símbolo especial (ej: !@#/&*^)'),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _registrarUsuario,
-              child: Text('Registrar'),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

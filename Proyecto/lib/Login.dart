@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'package:crypto/crypto.dart'; // Importamos la librería crypto para encriptar
+import 'package:proyecto/HistorialPedidosScreen.dart';
 import 'package:proyecto/Home.dart';
 import 'package:proyecto/main.dart';
 import 'package:proyecto/Home.dart';
 import 'package:proyecto/Registro_Screen.dart'; // Importa la pantalla de registro
-import 'package:shared_preferences/shared_preferences.dart'; // Importa SharedPreferences para almacenar datos localmente
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'ConfigurarContrasena.dart';
+import 'ConfigurarDispositivo.dart';
+import 'SeguimientoPedidoScreen.dart';
+import 'SolicitarPedidoScreen.dart'; // Importa SharedPreferences para almacenar datos localmente
 
 
 // Clase que define el estado de la pantalla de inicio de sesión (LoginScreen)
@@ -112,7 +118,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: double.infinity,
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.orange[300], // Color de fondo del encabezado
+                  //color: Colors.orange[300],
+                  color: Colors.orange,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(40),
                     bottomRight: Radius.circular(40),
@@ -120,20 +127,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: Column(
                   children: [
-                    SizedBox(height: 10),
-                    Text(
-                      'GasWise', // Título de la aplicación
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white, // Color del texto
-                      ),
-                    ),
-                    Text(
-                      'Gas siempre a la vista', // Subtítulo de la aplicación
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
+                    Positioned(
+                      top: 30, // Adjust vertical position
+                      left: 20,
+                      right: 20,
+                      child: SizedBox(
+                        height: 100, // Adjust logo size
+                        width: 100, // Adjust logo size
+                        child: Image.asset(
+                          'assets/logo.png', // Replace with your logo image
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
                   ],
@@ -154,7 +158,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange, // Color para el botón de iniciar sesión
+                        backgroundColor: Colors.orange,
+                        foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -163,14 +168,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        // Navega a la pantalla de registro
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => Registro_Screen()),
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey, // Color para el botón de registrarse
+                        backgroundColor: Colors.grey,
+                        foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -188,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Bienvenido a Gas Wise', // Mensaje de bienvenida
+                      'Bienvenido a Gas Wise',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -197,7 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     SizedBox(height: 10),
                     TextField(
-                      controller: correoController, // Campo de texto para el correo
+                      controller: correoController,
                       decoration: InputDecoration(
                         labelText: 'Correo electrónico',
                         border: OutlineInputBorder(
@@ -207,36 +212,58 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     SizedBox(height: 20),
                     TextField(
-                      controller: passwordController, // Campo de texto para la contraseña
+                      controller: passwordController,
                       decoration: InputDecoration(
                         labelText: 'Contraseña',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                         suffixIcon: IconButton(
-                          icon: Icon(_isObscure ? Icons.visibility : Icons.visibility_off), // Icono para mostrar/ocultar la contraseña
+                          icon: Icon(_isObscure ? Icons.visibility : Icons.visibility_off),
                           onPressed: () {
                             setState(() {
-                              _isObscure = !_isObscure; // Cambia el estado de visibilidad de la contraseña
+                              _isObscure = !_isObscure;
                             });
                           },
                         ),
                       ),
-                      obscureText: _isObscure, // Si es verdadero, la contraseña se oculta
+                      obscureText: _isObscure,
                     ),
                     SizedBox(height: 20),
                     // Botón para iniciar sesión
                     Center(
                       child: ElevatedButton(
-                        onPressed: _inicioSesion, // Llama a la función para iniciar sesión
+                        onPressed: _inicioSesion,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
+                          foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
                           padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                         ),
-                        child: Text('Iniciar sesión'), // Texto del botón
+                        child: Text('Iniciar sesión'),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    // Nuevo botón para ir a la pantalla de configuración del dispositivo
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => MenuPrincipal(nombreUsuario: '',)),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue, // Color del botón
+                          foregroundColor: Colors.white, // Establece el color del texto a blanco
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        ),
+                        child: Text('Configurar Dispositivo'), // Texto del botón
                       ),
                     ),
                   ],

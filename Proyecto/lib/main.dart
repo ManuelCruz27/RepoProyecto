@@ -1,57 +1,122 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; // Librería para realizar solicitudes HTTP
-import 'package:proyecto/Login.dart';
-import 'dart:async';
-import 'package:proyecto/RecuperarContraseña.dart'; // Importa la pantalla para recuperar la contraseña
-import 'package:proyecto/Registro_Screen.dart'; // Importa la pantalla de registro
-import 'package:proyecto/Home.dart'; // Importa la pantalla principal
-import 'package:proyecto/Menu.dart'; // Importa el menú de la aplicación
-import 'package:shared_preferences/shared_preferences.dart'; // Importa SharedPreferences para almacenar datos localmente
+import 'package:flutter/services.dart';
 
-// Función principal que inicializa la aplicación
+import 'Login.dart'; // Assuming Login and Registro_Screen are your login and registration screens
+import 'Registro_Screen.dart';
+
 void main() {
-  runApp(GasWiseApp());
+  runApp(const MyApp());
 }
 
-// Clase principal de la aplicación (GasWiseApp)
-class GasWiseApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MenuScreen(), // La pantalla inicial será la pantalla de login
+      title: 'GasWise',
+      theme: ThemeData(
+        primarySwatch: Colors.orange, // Use orange as the primary color
+      ),
+      home: const MyHomePage(),
     );
   }
 }
-class MenuScreen extends StatelessWidget {
 
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Bienvenido')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Welcome',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: Stack(
+        children: [
+          // Fondo con degradado (solo para el manómetro)
+          Positioned(
+             // Adjust vertical position
+            left: 0,
+            right: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.orange, // Adjust orange shades as desired
+                    Colors.deepOrange,
+                  ],
+                ),
+              ),
+              child: Image.asset(
+                'assets/bg.png', // Replace with your background image
+                fit: BoxFit.contain,
+              ),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                      (Route<dynamic> route) => false,
-                );
-              },
-              child: Text('Inicio de sesion'),
+          ),
+          // Logo en la parte superior (más pequeño)
+          Positioned(
+            top: 50, // Adjust vertical position
+            left: 20,
+            right: 20,
+            child: SizedBox(
+              height: 200, // Adjust logo size
+              width: 200, // Adjust logo size
+              child: Image.asset(
+                'assets/logo.png', // Replace with your logo image
+                fit: BoxFit.contain,
+              ),
             ),
+          ),
+          // Sección del contenido (abajo)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min, // Restrict column size
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                      );
+                    },
+                    child: Text('Iniciar Sesión'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange, // Use deep orange for button
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('¿No tienes una cuenta?',
+                  style: TextStyle(
+                    color: Colors.white, // Establecemos el color del texto a blanco
+                  ),
+          ),
 
-          ],
-        ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Registro_Screen()),
+                          );
+                        },
+                        child: Text('Regístrate'),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.orange, // Use deep orange for text
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
