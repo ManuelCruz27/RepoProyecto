@@ -263,7 +263,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                         ),
-                        child: Text('Home'), // Texto del botón
+                        child: Text('Boton Home'), // Texto del botón
                       ),
                     ),
                   ],
