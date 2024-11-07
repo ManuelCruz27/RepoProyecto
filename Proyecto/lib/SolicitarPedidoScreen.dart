@@ -112,7 +112,7 @@ class SolicitudPedidoScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ConfirmacionPedidoScreen()),
+                  MaterialPageRoute(builder: (context) =>  ConfirmacionPedidoScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(

@@ -23,7 +23,7 @@ class ConfiguracionDispositivoScreen extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.orange),
           onPressed: () {
-            // Acción al presionar "Regresar"
+            Navigator.pop(context);
           },
         ),
       ),

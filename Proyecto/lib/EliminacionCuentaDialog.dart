@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 
+import 'Home.dart';
+import 'Login.dart';
+
 class EliminacionCuentaDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
+    MaterialApp(
+      initialRoute: '/',
+      routes: {
+        '/': (context) => MenuPrincipal(nombreUsuario: '',),
+        '/login': (context) => LoginScreen(), // Asegúrate de que el nombre de la ruta esté correcto.
+      },
+    );
+
     return AlertDialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
@@ -34,7 +46,7 @@ class EliminacionCuentaDialog extends StatelessWidget {
             // Aquí puedes implementar la lógica para cerrar la sesión del usuario y redirigirlo a la pantalla de inicio de sesión
             Navigator.pushNamedAndRemoveUntil(
               context,
-              '/Login.dart', // Reemplaza '/login' con la ruta de tu pantalla de inicio de sesión
+              '/login', // Reemplaza '/login' con la ruta de tu pantalla de inicio de sesión
                   (route) => false,
             );
           },
