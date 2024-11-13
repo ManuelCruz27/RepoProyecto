@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter/material.dart';
-
-import 'package:flutter/material.dart';
-
 import 'ConfirmacionPedidoScreen.dart';
+import 'PedidoNoAceptado.dart';
 
 void main() {
   runApp(GasWiseApp());
@@ -40,7 +36,8 @@ class SolicitudPedidoScreen extends StatelessWidget {
           },
         ),
       ),
-      body: Padding(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView( // Aquí se agrega el SingleChildScrollView
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,19 +63,21 @@ class SolicitudPedidoScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 15),
-            ElevatedButton(
-              onPressed: () {
-                // Acción para usar ubicación actual
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+            Center(
+              child: OutlinedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Colors.blueAccent),
+                  backgroundColor: Colors.blueAccent,
+                  minimumSize: Size(double.infinity, 50), // Ajustado para un botón más grande
+                  padding: EdgeInsets.symmetric(horizontal: 40), // Espacio alrededor del texto
                 ),
-              ),
-              child: Text(
-                'Usar ubicación actual',
-                style: TextStyle(color: Colors.white),
+                child: Text(
+                  'Usar ubicación actual',
+                  style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
             SizedBox(height: 15),
@@ -107,24 +106,23 @@ class SolicitudPedidoScreen extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
             ),
-            Spacer(),
-            ElevatedButton(
+            SizedBox(height: 20), // Ajusta el tamaño del espacio para evitar el overflow
+            OutlinedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) =>  ConfirmacionPedidoScreen()),
+                  MaterialPageRoute(builder: (context) => ConfirmacionPedidoScreen()),
                 );
               },
-              style: ElevatedButton.styleFrom(
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.orange),
                 backgroundColor: Colors.orange,
-                minimumSize: Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                minimumSize: Size(double.infinity, 50), // Ancho del botón al máximo del contenedor
+                padding: EdgeInsets.symmetric(horizontal: 40), // Espacio alrededor del texto
               ),
               child: Text(
                 'Solicitar pedido',
-                style: TextStyle(color: Colors.white, fontSize: 16),
+                style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
               ),
             ),
           ],

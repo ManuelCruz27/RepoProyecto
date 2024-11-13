@@ -12,6 +12,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ConfigurarContrasena.dart';
 import 'ConfigurarDispositivo.dart';
+import 'GasCriticalWarning.dart';
+import 'GasLevelWarning.dart';
+import 'InstallDeviceScreen.dart';
+import 'InstallationSuccessScreen.dart';
+import 'PasswordRecoveryScreen.dart';
 import 'SeguimientoPedidoScreen.dart';
 import 'SolicitarPedidoScreen.dart'; // Importa SharedPreferences para almacenar datos localmente
 
@@ -107,172 +112,211 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Encabezado con el logo y título de la aplicación
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  //color: Colors.orange[300],
-                  color: Colors.orange,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(40),
-                    bottomRight: Radius.circular(40),
+      backgroundColor: Colors.grey[300],
+      resizeToAvoidBottomInset: true,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                // Parte superior con la imagen de fondo y el logo
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  decoration: BoxDecoration(
+                    color: Colors.orange,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(150),
+                      bottomRight: Radius.circular(150),
+                    ),
+                    image: DecorationImage(
+                      image: AssetImage('assets/bg1.png'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/logo.png',
+                          width: 150,
+                          height: 150,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                child: Column(
-                  children: [
-                    Positioned(
-                      top: 30, // Adjust vertical position
-                      left: 20,
-                      right: 20,
-                      child: SizedBox(
-                        height: 100, // Adjust logo size
-                        width: 100, // Adjust logo size
-                        child: Image.asset(
-                          'assets/logo.png', // Replace with your logo image
-                          fit: BoxFit.contain,
+                SizedBox(height: 20),
+
+                // Contenedor para el formulario de inicio de sesión
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  bottomLeft: Radius.circular(20),
+                                ),
+                              ),
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                            ),
+                            onPressed: () {},
+                            child: Text(
+                              'Iniciar Sesión',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.grey[300],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(20),
+                                  bottomRight: Radius.circular(20),
+                                ),
+                              ),
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Registro_Screen()),
+                              );
+                            },
+                            child: Text(
+                              'Registrar',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+
+                      // Texto de bienvenida centrado
+                      Center(
+                        child: Text(
+                          'Bienvenido a Gas Wise',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-              // Botones para iniciar sesión y registrarse
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.grey[200],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                      SizedBox(height: 20),
+
+                      // Campo de correo electrónico con tamaño reducido
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                        child: TextField(
+                          controller: correoController,
+                          decoration: InputDecoration(
+                            labelText: 'Correo',
+                          ),
                         ),
                       ),
-                      child: Text('Iniciar sesión'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Registro_Screen()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                      SizedBox(height: 10),
+
+                      // Campo de contraseña con tamaño reducido
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                        child: TextField(
+                          controller: passwordController,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            labelText: 'Contraseña',
+                          ),
                         ),
                       ),
-                      child: Text('Registrarse'),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-              // Sección de bienvenida y campos de entrada para correo y contraseña
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Bienvenido a Gas Wise',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    TextField(
-                      controller: correoController,
-                      decoration: InputDecoration(
-                        labelText: 'Correo electrónico',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                      SizedBox(height: 20),
+
+                      Center(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            padding:
+                            EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          onPressed: _inicioSesion,
+                          child: Text(
+                            'Iniciar Sesión',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    TextField(
-                      controller: passwordController,
-                      decoration: InputDecoration(
-                        labelText: 'Contraseña',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: Icon(_isObscure ? Icons.visibility : Icons.visibility_off),
+                      SizedBox(height: 20),
+
+                      Center(
+                        child: ElevatedButton(
                           onPressed: () {
-                            setState(() {
-                              _isObscure = !_isObscure;
-                            });
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      MenuPrincipal(nombreUsuario: '',)),
+                            );
                           },
-                        ),
-                      ),
-                      obscureText: _isObscure,
-                    ),
-                    SizedBox(height: 20),
-                    // Botón para iniciar sesión
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: _inicioSesion,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 50, vertical: 15),
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                          child: Text('Boton Home'),
                         ),
-                        child: Text('Iniciar sesión'),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    // Nuevo botón para ir a la pantalla de configuración del dispositivo
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => MenuPrincipal(nombreUsuario: '',)),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue, // Color del botón
-                          foregroundColor: Colors.white, // Establece el color del texto a blanco
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                      SizedBox(height: 10),
+
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PasswordRecoveryScreen()),
+                            );
+                          },
+                          child: Text('¿Olvidaste tu contraseña?'),
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.grey,
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                         ),
-                        child: Text('Boton Home'), // Texto del botón
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
+
 }

@@ -43,6 +43,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   # o la versión más reciente de fl_chart para gráficos
   # The "flutter_lints" package below contains a set of recommended lints to

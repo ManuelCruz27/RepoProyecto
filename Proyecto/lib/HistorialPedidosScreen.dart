@@ -1,29 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
-  runApp(GasWiseApp());
+  runApp(MyApp());
 }
 
-class GasWiseApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        primaryColor: Colors.orange,
-        textSelectionTheme: TextSelectionThemeData(
-          cursorColor: Colors.orange,
-          selectionColor: Colors.orange.withOpacity(0.3), // Color de selección
-          selectionHandleColor: Colors.orange,
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: Colors.white, // Fondo blanco para todos los TextFields
-          border: OutlineInputBorder(),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.orange), // Borde naranja al enfocar
-          ),
-        ),
-      ),
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('es', 'ES'), // Español
+        const Locale('en', 'US'), // Inglés
+      ],
+      locale: const Locale('es', 'ES'), // Establece español como idioma predeterminado
       home: HistorialPedidosScreen(),
     );
   }
@@ -42,50 +37,108 @@ class HistorialPedidosScreen extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        title: Text(
-          'Historial de pedidos',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
       ),
+      backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Buscar por fecha',
-                suffixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
+            Center(
+              child: Text(
+                "Historial de pedidos",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
               ),
-              keyboardType: TextInputType.datetime,
-              onSubmitted: (value) {
-                // Acción para buscar pedidos por fecha
-              },
             ),
             SizedBox(height: 20),
-            Expanded(
+
+            // Seleccionar fecha
+            GestureDetector(
+              onTap: () async {
+                final selectedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
+                  builder: (context, child) {
+                    return Theme(
+                      data: ThemeData.light().copyWith(
+                        primaryColor: Colors.orange, // Color principal
+                        colorScheme: ColorScheme.light(
+                          primary: Colors.orange, // Cambia el color de selección
+                        ),
+                        buttonTheme: ButtonThemeData(
+                          textTheme: ButtonTextTheme.primary,
+                        ),
+                      ),
+                      child: child!,
+                    );
+                  },
+                );
+
+                if (selectedDate != null) {
+                  print(selectedDate);
+                }
+              },
               child: Container(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.black26),
                 ),
-                child: ListView(
+                child: Row(
                   children: [
-                    PedidoItem(
-                      fecha: 'Fecha de surtido',
-                      hora: 'Hora',
-                      litros: 'Cantidad de litros surtidos',
-                      trabajador: 'Trabajador que surtió el pedido',
-                      unidad: 'No. unidad',
-                      telefono: 'Teléfono',
+                    Expanded(
+                      child: Text(
+                        "Buscar por fecha",
+                        style: TextStyle(color: Colors.black54),
+                      ),
                     ),
-                    // Aquí puedes añadir más instancias de PedidoItem para cada pedido encontrado
+                    Icon(Icons.search, color: Colors.black54),
                   ],
                 ),
+              ),
+            ),
+
+            SizedBox(height: 20),
+
+            // Lista de pedidos
+            Expanded(
+              child: ListView.builder(
+                itemCount: 5, // Ajusta según el número de pedidos
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 20),
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildOrderDetailField("Fecha de surtido"),
+                          SizedBox(height: 10),
+                          _buildOrderDetailField("Hora"),
+                          SizedBox(height: 10),
+                          _buildOrderDetailField("Cantidad de litros surtidos"),
+                          SizedBox(height: 10),
+                          _buildOrderDetailField("Trabajador que surtió el pedido"),
+                          SizedBox(height: 10),
+                          _buildOrderDetailField("No. unidad"),
+                          SizedBox(height: 10),
+                          _buildOrderDetailField("Teléfono"),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ],
@@ -93,84 +146,26 @@ class HistorialPedidosScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-class PedidoItem extends StatelessWidget {
-  final String fecha;
-  final String hora;
-  final String litros;
-  final String trabajador;
-  final String unidad;
-  final String telefono;
-
-  PedidoItem({
-    required this.fecha,
-    required this.hora,
-    required this.litros,
-    required this.trabajador,
-    required this.unidad,
-    required this.telefono,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  // Método para construir cada campo de detalle de pedido
+  Widget _buildOrderDetailField(String label) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextFormField(
-          initialValue: fecha,
-          decoration: InputDecoration(
-            labelText: 'Fecha de surtido',
-            border: OutlineInputBorder(),
-          ),
-          readOnly: true,
+        Text(
+          label,
+          style: TextStyle(color: Colors.black54),
         ),
-        SizedBox(height: 10),
-        TextFormField(
-          initialValue: hora,
-          decoration: InputDecoration(
-            labelText: 'Hora',
-            border: OutlineInputBorder(),
+        SizedBox(height: 5),
+        Container(
+          height: 40,
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.black26),
           ),
-          readOnly: true,
         ),
-        SizedBox(height: 10),
-        TextFormField(
-          initialValue: litros,
-          decoration: InputDecoration(
-            labelText: 'Cantidad de litros surtidos',
-            border: OutlineInputBorder(),
-          ),
-          readOnly: true,
-        ),
-        SizedBox(height: 10),
-        TextFormField(
-          initialValue: trabajador,
-          decoration: InputDecoration(
-            labelText: 'Trabajador que surtió el pedido',
-            border: OutlineInputBorder(),
-          ),
-          readOnly: true,
-        ),
-        SizedBox(height: 10),
-        TextFormField(
-          initialValue: unidad,
-          decoration: InputDecoration(
-            labelText: 'No. unidad',
-            border: OutlineInputBorder(),
-          ),
-          readOnly: true,
-        ),
-        SizedBox(height: 10),
-        TextFormField(
-          initialValue: telefono,
-          decoration: InputDecoration(
-            labelText: 'Teléfono',
-            border: OutlineInputBorder(),
-          ),
-          readOnly: true,
-        ),
-        Divider(height: 30, color: Colors.grey),
       ],
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'ConfirmacionEliminarCuentaScreen.dart';
+import 'PasswordRecoveryScreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -37,7 +38,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
           },
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView( // Cambio aquí
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -79,6 +80,11 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 child: TextButton(
                   onPressed: () {
                     // Acción de "¿Olvidaste tu contraseña?"
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PasswordRecoveryScreen()),
+                    );
                   },
                   child: Text(
                     '¿Olvidaste tu contraseña?',
@@ -91,7 +97,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
               SizedBox(height: 16),
               _buildPasswordField('Confirmar Contraseña'),
             ],
-            Spacer(),
+            SizedBox(height: 24),
             _buildButton(context, 'Guardar cambios', Colors.orange),
             if (!isDatosSelected) ...[
               SizedBox(height: 16),
@@ -196,7 +202,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => EliminarCuentaDialog()),
+            MaterialPageRoute(builder: (context) => ConfirmacionEliminarCuentaScreen()),
           );
         },
         child: Text(

@@ -1,16 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:async';
-import 'package:crypto/crypto.dart'; // Importamos la librería crypto para encriptar
 
-// Pantalla de Registro
+import 'Login.dart';
+
 class Registro_Screen extends StatefulWidget {
   @override
   _RegistroScreenState createState() => _RegistroScreenState();
 }
 
-// Pantalla de Registro (sin hash en el cliente)
 class _RegistroScreenState extends State<Registro_Screen> {
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController correoController = TextEditingController();
@@ -49,145 +47,181 @@ class _RegistroScreenState extends State<Registro_Screen> {
     String password = passwordController.text;
 
     if (nombre.isEmpty || correo.isEmpty || password.isEmpty) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Por favor, completa todos los campos')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Por favor, completa todos los campos')),
+      );
       return;
     }
 
     if (!validarContrasena(password)) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('La contraseña debe tener al menos 6 caracteres, con mayúsculas, minúsculas, números y símbolos.')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('La contraseña debe tener al menos 6 caracteres, con mayúsculas, minúsculas, números y símbolos.')),
+      );
       return;
     }
 
     final Map<String, dynamic> requestBody = {
       'nombre': nombre,
       'email': correo,
-      'contraseña': password,  // Enviar la contraseña en texto plano
+      'contraseña': password,
     };
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.100.19:3000/register'), // la IPv4 cambia dependiendo de la red que estés conectado
+        Uri.parse('http://192.168.100.19:3000/register'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(requestBody),
       );
 
       if (response.statusCode == 200) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Usuario registrado con éxito')),
-          );
-        }
-        Navigator.pop(context); // Redirigir al inicio de sesión después del registro
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al registrar usuario: ${response.statusCode}')),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al conectar con el servidor')),
+          SnackBar(content: Text('Usuario registrado con éxito')),
+        );
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al registrar usuario: ${response.statusCode}')),
         );
       }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al conectar con el servidor')),
+      );
     }
   }
-
-  // **New: Image variables**
-  final _backgroundImage = AssetImage('assets/bg1.png'); // Assuming your image is named 'background_image.jpg' and resides in an 'images' folder within your project
-  final _logoImage = AssetImage('assets/logo.png'); // Asegúrate de tener el logo en assets
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // **New: ClipRRect for rounded corners**
-      body: Stack(
-        children: [
-          // **Image Container: Circular Image at the top**
-          Positioned(
-            top: -90,
-            left: 0,
-            right: 0,
-            child: ClipOval(
-              child: Container(
-                width: MediaQuery.of(context).size.width, // Ancho total
-                height: 250, // Altura de la imagen
-                child: Image(
-                  image: _backgroundImage,
+      backgroundColor: Colors.grey[300],
+      body: SingleChildScrollView( // Aquí agregamos el SingleChildScrollView
+        child: Column(
+          children: [
+            // Parte superior con la imagen de fondo y el logo
+            Container(
+              height: MediaQuery.of(context).size.height * 0.4,
+              decoration: BoxDecoration(
+                color: Colors.orange,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(150),
+                  bottomRight: Radius.circular(150),
+                ),
+                image: DecorationImage(
+                  image: AssetImage('assets/bg1.png'),
                   fit: BoxFit.cover,
                 ),
               ),
-            ),
-          ),
-
-          // Logo en la parte superior (más pequeño)
-          Positioned(
-            top: 35, // Adjust vertical position
-            left: 20,
-            right: 20,
-            child: SizedBox(
-              height: 100, // Adjust logo size
-              width: 100, // Adjust logo size
-              child: Image.asset(
-                'assets/logo.png', // Replace with your logo image
-                fit: BoxFit.contain,
+              child: Center(
+                child: Image.asset(
+                  'assets/logo.png',
+                  width: 150,
+                  height: 150,
+                ),
               ),
             ),
-          ),
 
-          // **Form Content**
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
+            // Segundo contenedor, con el formulario
+            Container(
+              padding: EdgeInsets.all(16),
+              margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+              ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  //Text('Registro de Usuario', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 180), // Asegura que haya espacio debajo del logo
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              bottomLeft: Radius.circular(20),
+                            ),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                        ),
+                        onPressed: () {
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginScreen()),
+                          );
+                        },
+                        child: Text(
+                          'Iniciar Sesión',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey[300],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(20),
+                              bottomRight: Radius.circular(20),
+                            ),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Registro_Screen()),
+                          );
+                        },
+                        child: Text(
+                          'Registrar',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+
                   TextField(
                     controller: nombreController,
-                    decoration: InputDecoration(labelText: 'Nombre', border: OutlineInputBorder()),
+                    decoration: InputDecoration(
+                      labelText: 'Nombre',
+                    ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
                   TextField(
                     controller: correoController,
-                    decoration: InputDecoration(labelText: 'Correo', border: OutlineInputBorder()),
+                    decoration: InputDecoration(
+                      labelText: 'Correo',
+                    ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
                   TextField(
                     controller: passwordController,
                     obscureText: _isObscure,
                     decoration: InputDecoration(
                       labelText: 'Contraseña',
-                      border: OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isObscure ? Icons.visibility_off : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isObscure = !_isObscure;
+                          });
+                        },
+                      ),
                     ),
                     onChanged: _actualizarFuerzaContrasena,
                   ),
                   SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: !_isObscure,
-                        activeColor: Colors.green,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _isObscure = !value!;
-                          });
-                        },
-                      ),
-                      Expanded(child: Text('Mostrar Contraseña')),
-                    ],
-                  ),
-                  SizedBox(height: 20),
                   LinearProgressIndicator(
                     value: _passwordStrength,
                     backgroundColor: Colors.redAccent,
@@ -195,30 +229,23 @@ class _RegistroScreenState extends State<Registro_Screen> {
                     minHeight: 10,
                   ),
                   SizedBox(height: 20),
-                  Text(
-                    'La contraseña debe cumplir con los siguientes requisitos:',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Text('Al menos 6 caracteres'),
-                  Text('Una letra mayúscula'),
-                  Text('Una letra minúscula'),
-                  Text('Un número'),
-                  Text('Un símbolo especial (ej: !@#/&*^)'),
-                  SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: _registrarUsuario,
                     child: Text('Registrar'),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      backgroundColor: Colors.orange, // Cambiar color del texto
+                      backgroundColor: Colors.orange,
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+
+
+
 }

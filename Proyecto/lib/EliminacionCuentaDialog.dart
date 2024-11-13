@@ -1,61 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Home.dart';
 import 'Login.dart';
 
-class EliminacionCuentaDialog extends StatelessWidget {
+class EliminacionExitosaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[300],
+      body: Center(
+        child: Container(
+          padding: EdgeInsets.all(20),
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Cuenta eliminada correctamente',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 10),
+              Icon(
+                Icons.check,
+                color: Colors.black,
+                size: 50,
+              ),
+              SizedBox(height: 10),
+              Text(
+                '¡Has eliminado la cuenta de manera exitosa!\nAgradecemos tu estadía en nuestra App',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 20),
+              OutlinedButton(
+                onPressed: () async {
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  await prefs.remove('token'); // Elimina el token de sesión
 
-    MaterialApp(
-      initialRoute: '/',
-      routes: {
-        '/': (context) => MenuPrincipal(nombreUsuario: '',),
-        '/login': (context) => LoginScreen(), // Asegúrate de que el nombre de la ruta esté correcto.
-      },
-    );
+                  // Redirigir a la pantalla de inicio de sesión y eliminar todas las pantallas anteriores
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                        (Route<dynamic> route) => false, // Esta condición elimina todas las rutas previas
+                  );
+                },
 
-    return AlertDialog(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.check_circle,
-            size: 48,
-            color: Colors.green,
-          ),
-          SizedBox(height: 16),
-          Text(
-            '¡Has eliminado la cuenta de manera exitosa!',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          Text(
-            'Agradecemos tu estadía en nuestra App',
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            // Aquí puedes implementar la lógica para cerrar la sesión del usuario y redirigirlo a la pantalla de inicio de sesión
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              '/login', // Reemplaza '/login' con la ruta de tu pantalla de inicio de sesión
-                  (route) => false,
-            );
-          },
-          child: Text(
-            'Continuar y salir de la aplicación',
-            style: TextStyle(color: Colors.orange),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Colors.orange),
+                  backgroundColor: Colors.orange,
+                ),
+                child: Text(
+                  'Continuar y salir de la aplicacion',
+                  style: TextStyle(color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

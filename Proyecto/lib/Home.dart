@@ -24,10 +24,10 @@ class MenuPrincipal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0, // Sin sombra en la appBar
-        title: Text('GASWISE', style: TextStyle(color: Colors.orange)),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.account_circle, color: Colors.orange),
@@ -58,29 +58,14 @@ class MenuPrincipal extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  top: 50, // Ajusta la posición según sea necesario
+                  top: 40, // Ajusta la posición según sea necesario
                   left: 0,
                   right: 0,
                   child: Column(
                     children: [
                       Image.asset(
                         'assets/logo.png', // Cambia esto por tu imagen del logo
-                        height: 100,
-                      ),
-                      Text(
-                        'Bienvenido a Gas Wise',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        '$nombreUsuario',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
+                        height: 130,
                       ),
                     ],
                   ),
@@ -92,6 +77,26 @@ class MenuPrincipal extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Column(
                 children: [
+                  SizedBox(height: 10),
+
+                  Text(
+                    'Bienvenido a Gas Wise',
+                    style: TextStyle(
+                      color: Colors.orange,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '$nombreUsuario',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
+                  ),
+
+                  SizedBox(height: 10),
+
                   Text(
                     'Nivel del tanque',
                     style: TextStyle(fontSize: 20),

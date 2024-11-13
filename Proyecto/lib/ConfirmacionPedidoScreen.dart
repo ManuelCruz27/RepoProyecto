@@ -1,18 +1,35 @@
 import 'package:flutter/material.dart';
 
+import 'GasLevelWarning.dart';
+import 'InstallDeviceScreen.dart';
+import 'InstallationSuccessScreen.dart';
+
 class ConfirmacionPedidoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Pedido aceptado', style: TextStyle(color: Colors.orange)),
-        backgroundColor: Colors.white,
-      ),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+
+            SizedBox(height: 20),
+            Center(
+            child:Text(
+              'Pedido aceptado',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22),
+            ),
+            ),
+            SizedBox(height: 10),
+            Icon(
+              Icons.check,
+              size: 50,
+              color: Colors.black,
+            ),
+            SizedBox(height: 10),
             Text(
               'Tu pedido ha sido aceptado, si estás de acuerdo con el total, confirma tu abastecimiento',
               textAlign: TextAlign.center,
@@ -24,7 +41,7 @@ class ConfirmacionPedidoScreen extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -46,7 +63,7 @@ class ConfirmacionPedidoScreen extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -66,20 +83,31 @@ class ConfirmacionPedidoScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // Acción para confirmar pedido
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => InstallDeviceScreen()),
+                );
               },
               child: Text('Confirmar Abastecimiento'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
+                foregroundColor: Colors.white, // Color del texto a blanco
               ),
             ),
             SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
                 // Acción para cancelar pedido
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => GasLevelWarning()),
+                );
               },
               child: Text('Cancelar Surtido'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: Colors.white,
+                side: BorderSide(color: Colors.black),
+                foregroundColor: Colors.orange, // Color del texto a blanco
               ),
             ),
           ],

@@ -3,29 +3,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'ConfirmacionPedidoScreen.dart';
+import 'Home.dart';
 
 class SeguimientoPedidoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Seguimiento de pedido',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.orange),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
+            Text(
+              'Seguimiento de pedido', // Número de pedido
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
             Text(
               '####', // Número de pedido
               style: TextStyle(
@@ -46,7 +42,7 @@ class SeguimientoPedidoScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ConfirmacionPedidoScreen()),
+                  MaterialPageRoute(builder: (context) => MenuPrincipal(nombreUsuario: '',)),
                 );
               },
               style: ElevatedButton.styleFrom(

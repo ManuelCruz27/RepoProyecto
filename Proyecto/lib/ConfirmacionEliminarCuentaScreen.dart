@@ -2,39 +2,76 @@ import 'package:flutter/material.dart';
 
 import 'EliminacionCuentaDialog.dart';
 
-class EliminarCuentaDialog extends StatelessWidget {
+class ConfirmacionEliminarCuentaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Colors.white, // Fondo blanco
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0), // Bordes redondeados
-      ),
-      content: Container(
-        padding: EdgeInsets.all(20.0),
-        child: Text(
-          '¿Estás seguro de eliminar la cuenta?',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+    return Scaffold(
+      backgroundColor: Colors.grey[300],
+      body: Center(
+        child: Container(
+          padding: EdgeInsets.all(20),
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '¿ESTÁS SEGURO DE ELIMINAR LA CUENTA?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 20),
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EliminacionExitosaScreen()),
+                  );
+                },
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Colors.black),
+                  minimumSize: Size(double.infinity, 50), // Ancho del botón al máximo del contenedor
+                  padding: EdgeInsets.symmetric(horizontal: 40), // Espacio alrededor del texto
+                ),
+                child: Text(
+                  'Confirmar',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 20),
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Colors.orange),
+                  backgroundColor: Colors.orange,
+                  minimumSize: Size(double.infinity, 50), // Ancho del botón al máximo del contenedor
+                  padding: EdgeInsets.symmetric(horizontal: 40), // Espacio alrededor del texto
+                ),
+                child: Text(
+                  'Cancelar',
+                  style: TextStyle(color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => EliminacionCuentaDialog()),
-            );
-          },
-          child: Text('Confirmar', style: TextStyle(color: Colors.red)),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context); // Cierra el diálogo
-          },
-          child: Text('Cancelar', style: TextStyle(color: Colors.orange)),
-        ),
-      ],
     );
   }
 }
