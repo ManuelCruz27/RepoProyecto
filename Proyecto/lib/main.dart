@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,12 +48,15 @@ class MyHomePage extends StatelessWidget {
                   ],
                 ),
               ),
+
               child: Image.asset(
                 'assets/bg.png', // Replace with your background image
                 fit: BoxFit.contain,
               ),
+
             ),
           ),
+
           // Logo en la parte superior (más pequeño)
           Positioned(
             top: 50, // Adjust vertical position
@@ -60,11 +64,14 @@ class MyHomePage extends StatelessWidget {
             right: 20,
             child: SizedBox(
               height: 200, // Adjust logo size
-              width: 200, // Adjust logo size
+              width: 200,
+              // Adjust logo size
               child: Image.asset(
                 'assets/logo.png', // Replace with your logo image
                 fit: BoxFit.contain,
               ),
+
+
             ),
           ),
           // Sección del contenido (abajo)

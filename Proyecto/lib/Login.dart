@@ -1,110 +1,98 @@
 import 'dart:convert';
+import 'dart:io'; // Para HttpOverrides
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:async';
-import 'package:crypto/crypto.dart'; // Importamos la librería crypto para encriptar
-import 'package:proyecto/HistorialPedidosScreen.dart';
-import 'package:proyecto/Home.dart';
-import 'package:proyecto/main.dart';
-import 'package:proyecto/Home.dart';
 import 'package:proyecto/Registro_Screen.dart'; // Importa la pantalla de registro
 import 'package:shared_preferences/shared_preferences.dart';
+import 'Home.dart'; // Pantalla principal
 
-import 'ConfigurarContrasena.dart';
-import 'ConfigurarDispositivo.dart';
-import 'GasCriticalWarning.dart';
-import 'GasLevelWarning.dart';
-import 'InstallDeviceScreen.dart';
-import 'InstallationSuccessScreen.dart';
-import 'PasswordRecoveryScreen.dart';
-import 'SeguimientoPedidoScreen.dart';
-import 'SolicitarPedidoScreen.dart'; // Importa SharedPreferences para almacenar datos localmente
-
-
-// Clase que define el estado de la pantalla de inicio de sesión (LoginScreen)
+// Clase que define la pantalla de inicio de sesión
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
+// HttpOverrides para aceptar certificados autofirmados
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 class _LoginScreenState extends State<LoginScreen> {
-  // Controladores para los campos de correo y contraseña
   final TextEditingController correoController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
-  // Variable para controlar la visibilidad de la contraseña
   bool _isObscure = true;
 
-  // Función asincrónica que maneja el inicio de sesión
-  Future<void> _inicioSesion() async {
-    String correo = correoController.text; // Obtiene el valor del campo de correo
-    String password = passwordController.text; // Obtiene el valor del campo de contraseña
+  @override
+  void initState() {
+    super.initState();
+    HttpOverrides.global = MyHttpOverrides(); // Habilitar soporte para HTTPS
+  }
 
-    // Verifica si ambos campos están llenos
+  Future<void> _inicioSesion() async {
+    String correo = correoController.text;
+    String password = passwordController.text;
+
     if (correo.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Por favor, completa todos los campos.')), // Muestra un mensaje si faltan datos
+        SnackBar(content: Text('Por favor, completa todos los campos.')),
       );
       return;
     }
 
-    // Construye el cuerpo de la solicitud HTTP con los datos del usuario
     final Map<String, dynamic> requestBody = {
       'email': correo,
-      'password': password
+      'password': password,
     };
 
     try {
-      // Realiza la solicitud HTTP POST para iniciar sesión
       final response = await http.post(
-        Uri.parse('http://192.168.100.19:3000/login'), // Cambia esta URL según tu configuración
-        headers: {'Content-Type': 'application/json'}, // Cabecera para indicar que el contenido es JSON
-        body: jsonEncode(requestBody), // Convierte el cuerpo de la solicitud a JSON
+        Uri.parse('https://192.168.100.27:3000/login'), // Cambié a HTTPS
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
       );
 
-      print('Response status: ${response.statusCode}'); // Imprime el estado de la respuesta (ej. 200)
-      print('Response body: ${response.body}'); // Imprime el cuerpo de la respuesta
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
-      // Si la respuesta es exitosa (código 200)
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body); // Decodifica el cuerpo de la respuesta
+        final data = jsonDecode(response.body);
 
-        // Verifica si en la respuesta existen los campos 'token' y 'nombre'
         if (data.containsKey('token') && data.containsKey('nombre')) {
-          final String token = data['token']; // Obtiene el token del usuario
-          final String nombreUsuario = data['nombre']; // Obtiene el nombre del usuario
+          final String token = data['token'];
+          final String nombreUsuario = data['nombre'];
 
-          // Almacena el token y el nombre del usuario en SharedPreferences
           SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('token', token); // Almacena el token
-          await prefs.setString('nombreUsuario', nombreUsuario); // Almacena el nombre del usuario
+          await prefs.setString('token', token);
+          await prefs.setString('nombreUsuario', nombreUsuario);
 
-          print(token);
-          print('Nombre de usuario: ' + nombreUsuario);
+          print('Token: $token');
+          print('Nombre de usuario: $nombreUsuario');
 
-          // Navega a la pantalla del menú principal, pasando el nombre del usuario
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => MenuPrincipal(nombreUsuario: nombreUsuario), // Pasa el nombre del usuario
+              builder: (context) => MenuPrincipal(nombreUsuario: nombreUsuario),
             ),
           );
         } else {
-          // Muestra un mensaje de error si no se encuentran los campos 'token' o 'nombre'
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: No se encontró el campo "token" o "nombre".')),
+            SnackBar(content: Text('Error: Respuesta inesperada del servidor.')),
           );
         }
       } else {
-        // Muestra un mensaje de error si la respuesta no es exitosa
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error al iniciar sesión: ${response.statusCode}')),
         );
       }
     } catch (e) {
-      print('Error: $e'); // Imprime el error en la consola
+      print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al conectar con el servidor')), // Muestra un mensaje de error si falla la conexión
+        SnackBar(content: Text('Error al conectar con el servidor.')),
       );
     }
   }
@@ -112,211 +100,136 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
-      resizeToAvoidBottomInset: true,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                // Parte superior con la imagen de fondo y el logo
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.4,
-                  decoration: BoxDecoration(
-                    color: Colors.orange,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(150),
-                      bottomRight: Radius.circular(150),
-                    ),
-                    image: DecorationImage(
-                      image: AssetImage('assets/bg1.png'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/logo.png',
-                          width: 150,
-                          height: 150,
-                        ),
-                      ],
-                    ),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Encabezado
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(40),
+                    bottomRight: Radius.circular(40),
                   ),
                 ),
-                SizedBox(height: 20),
-
-                // Contenedor para el formulario de inicio de sesión
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  bottomLeft: Radius.circular(20),
-                                ),
-                              ),
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                            ),
-                            onPressed: () {},
-                            child: Text(
-                              'Iniciar Sesión',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey[300],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(20),
-                                  bottomRight: Radius.circular(20),
-                                ),
-                              ),
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Registro_Screen()),
-                              );
-                            },
-                            child: Text(
-                              'Registrar',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ],
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 100,
+                      width: 100,
+                      child: Image.asset(
+                        'assets/logo.png',
+                        fit: BoxFit.contain,
                       ),
-                      SizedBox(height: 20),
-
-                      // Texto de bienvenida centrado
-                      Center(
-                        child: Text(
-                          'Bienvenido a Gas Wise',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-
-                      // Campo de correo electrónico con tamaño reducido
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 40),
-                        child: TextField(
-                          controller: correoController,
-                          decoration: InputDecoration(
-                            labelText: 'Correo',
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-
-                      // Campo de contraseña con tamaño reducido
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 40),
-                        child: TextField(
-                          controller: passwordController,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            labelText: 'Contraseña',
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-
-                      Center(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
-                            padding:
-                            EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                          onPressed: _inicioSesion,
-                          child: Text(
-                            'Iniciar Sesión',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      MenuPrincipal(nombreUsuario: '',)),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 15),
-                          ),
-                          child: Text('Boton Home'),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-
-                      Center(
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PasswordRecoveryScreen()),
-                            );
-                          },
-                          child: Text('¿Olvidaste tu contraseña?'),
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: 20),
+              // Botones de Iniciar Sesión y Registrarse
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.grey[200],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Text('Iniciar sesión'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Registro_Screen()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Text('Registrarse'),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              // Campos de Entrada
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: correoController,
+                      decoration: InputDecoration(
+                        labelText: 'Correo electrónico',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    TextField(
+                      controller: passwordController,
+                      decoration: InputDecoration(
+                        labelText: 'Contraseña',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(_isObscure ? Icons.visibility : Icons.visibility_off),
+                          onPressed: () {
+                            setState(() {
+                              _isObscure = !_isObscure;
+                            });
+                          },
+                        ),
+                      ),
+                      obscureText: _isObscure,
+                    ),
+                    SizedBox(height: 20),
+                    // Botón para Iniciar Sesión
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: _inicioSesion,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        ),
+                        child: Text('Iniciar sesión'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
-
 }

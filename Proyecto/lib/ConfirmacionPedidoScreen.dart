@@ -110,6 +110,9 @@ class ConfirmacionPedidoScreen extends StatelessWidget {
                 foregroundColor: Colors.orange, // Color del texto a blanco
               ),
             ),
+
+
+
           ],
         ),
       ),
