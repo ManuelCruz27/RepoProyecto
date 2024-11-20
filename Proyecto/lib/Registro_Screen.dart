@@ -215,7 +215,7 @@ class _RegistroScreenState extends State<Registro_Screen> {
                     onPressed: _registrarUsuario,
                     child: Text('Registrar'),
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
+                      foregroundColor: Colors.black,
                       backgroundColor: Colors.orange,
                     ),
                   ),
