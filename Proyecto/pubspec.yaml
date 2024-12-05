@@ -31,6 +31,12 @@ dependencies:
   flutter:
     sdk: flutter
 
+
+  google_maps_flutter: ^2.2.2
+  geolocator: ^10.0.1  # Asegúrate de usar la última versión estable
+  geocoding: ^2.0.5  # Verifica la última versión en pub.dev
+  url_launcher: ^6.1.9
+  flutter_barcode_scanner: ^2.0.0
   fl_chart: ^0.69.0
   http: ^0.13.3  # Agrega esta línea fuera de 'sdk: flutter'
   crypto: ^3.0.0  # Añade esta línea para usar la librería crypto

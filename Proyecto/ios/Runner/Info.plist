@@ -45,5 +45,26 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<key>NSLocationWhenInUseUsageDescription</key>
+    <string>Necesitamos tu ubicación para completar el pedido de gas.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Se requiere tu ubicación para identificar tu dirección.</string>
+
+    <key>NSCameraUsageDescription</key>
+    <string>Necesitamos acceder a tu cámara para escanear códigos QR</string>
+
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>http</string>
+        <string>https</string>
+    </array>
+
+    <key>NSAppTransportSecurity</key>
+    <dict>
+      <key>NSAllowsArbitraryLoads</key>
+      <true/>
+    </dict>
+
 </dict>
 </plist>

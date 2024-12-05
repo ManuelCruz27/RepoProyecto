@@ -1,24 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+
 import 'ConfirmacionPedidoScreen.dart';
-import 'PedidoNoAceptado.dart';
 
-void main() {
-  runApp(GasWiseApp());
-}
-
-class GasWiseApp extends StatelessWidget {
+class SolicitudPedidoScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-      ),
-      home: SolicitudPedidoScreen(),
-    );
-  }
+  _SolicitudPedidoScreenState createState() => _SolicitudPedidoScreenState();
 }
 
-class SolicitudPedidoScreen extends StatelessWidget {
+class _SolicitudPedidoScreenState extends State<SolicitudPedidoScreen> {
+  final TextEditingController direccionController = TextEditingController();
+
+  // Función para obtener la ubicación actual y convertirla a dirección legible
+  Future<void> _obtenerUbicacionActual() async {
+    try {
+      // Solicitar permisos de ubicación
+      LocationPermission permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        throw Exception("Permiso de ubicación denegado.");
+      }
+
+      // Obtener la ubicación actual
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      // Obtener la dirección a partir de las coordenadas
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark lugar = placemarks.first;
+
+        // Formatear la dirección
+        String direccion = "${lugar.street}, ${lugar.locality}, ${lugar.postalCode}, ${lugar.country}";
+
+        // Actualizar el campo de texto con la dirección
+        setState(() {
+          direccionController.text = direccion;
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al obtener la ubicación: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +69,7 @@ class SolicitudPedidoScreen extends StatelessWidget {
         ),
       ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView( // Aquí se agrega el SingleChildScrollView
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,6 +88,7 @@ class SolicitudPedidoScreen extends StatelessWidget {
             ),
             SizedBox(height: 15),
             TextField(
+              controller: direccionController,
               decoration: InputDecoration(
                 labelText: 'Dirección',
                 labelStyle: TextStyle(color: Colors.grey),
@@ -65,18 +98,20 @@ class SolicitudPedidoScreen extends StatelessWidget {
             SizedBox(height: 15),
             Center(
               child: OutlinedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                onPressed: _obtenerUbicacionActual,
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: Colors.blueAccent),
                   backgroundColor: Colors.blueAccent,
-                  minimumSize: Size(double.infinity, 50), // Ajustado para un botón más grande
+                  minimumSize: Size(double.infinity, 50), // Botón más grande
                   padding: EdgeInsets.symmetric(horizontal: 40), // Espacio alrededor del texto
                 ),
                 child: Text(
                   'Usar ubicación actual',
-                  style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -106,9 +141,11 @@ class SolicitudPedidoScreen extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 20), // Ajusta el tamaño del espacio para evitar el overflow
+            SizedBox(height: 20),
             OutlinedButton(
               onPressed: () {
+                // Acción para solicitar pedido
+                // Acción para confirmar pedido
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ConfirmacionPedidoScreen()),
@@ -117,12 +154,16 @@ class SolicitudPedidoScreen extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: Colors.orange),
                 backgroundColor: Colors.orange,
-                minimumSize: Size(double.infinity, 50), // Ancho del botón al máximo del contenedor
-                padding: EdgeInsets.symmetric(horizontal: 40), // Espacio alrededor del texto
+                minimumSize: Size(double.infinity, 50),
+                padding: EdgeInsets.symmetric(horizontal: 40),
               ),
               child: Text(
                 'Solicitar pedido',
-                style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],

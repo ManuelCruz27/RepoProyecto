@@ -1,11 +1,18 @@
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'ConfirmacionPedidoScreen.dart';
 import 'Home.dart';
 
-class SeguimientoPedidoScreen extends StatelessWidget {
+class SeguimientoPedidoScreen extends StatefulWidget {
+  @override
+  _SeguimientoPedidoScreenState createState() => _SeguimientoPedidoScreenState();
+}
+
+class _SeguimientoPedidoScreenState extends State<SeguimientoPedidoScreen> {
+  late GoogleMapController mapController;
+
+  final LatLng _initialPosition = LatLng(19.4326, -99.1332); // Coordenadas iniciales (CDMX)
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,7 +22,7 @@ class SeguimientoPedidoScreen extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              'Seguimiento de pedido', // Número de pedido
+              'Seguimiento de pedido',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -23,7 +30,7 @@ class SeguimientoPedidoScreen extends StatelessWidget {
               ),
             ),
             Text(
-              '####', // Número de pedido
+              '####',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -31,18 +38,41 @@ class SeguimientoPedidoScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            Container(
-              height: 300,
-              width: double.infinity,
-              color: Colors.grey[300], // Placeholder para el mapa
-              child: Center(child: Text("Mapa aquí")),
+
+            // Google Map
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.black12),
+                ),
+                child: GoogleMap(
+                  onMapCreated: (controller) {
+                    mapController = controller;
+                  },
+                  initialCameraPosition: CameraPosition(
+                    target: _initialPosition,
+                    zoom: 14.0,
+                  ),
+                  markers: {
+                    Marker(
+                      markerId: MarkerId("pedido"),
+                      position: _initialPosition, // Posición inicial del pedido
+                      infoWindow: InfoWindow(title: "Pedido Actual"),
+                    ),
+                  },
+                ),
+              ),
             ),
             SizedBox(height: 20),
+
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MenuPrincipal(nombreUsuario: '',)),
+                  MaterialPageRoute(
+                    builder: (context) => MenuPrincipal(nombreUsuario: ''),
+                  ),
                 );
               },
               style: ElevatedButton.styleFrom(
